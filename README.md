@@ -10,4 +10,5 @@ Storage media for surveillance footage is costly. Even with the advantage of .h2
 
 In addition there is the problem of monitoring and auditing the footage. Historically a pair of human eyes was required to at least fast forward through hours if not days of footage of empty fields, rooms, halls, and parking lots to find a few moments of useful information. By using DLNNs we can edit out the empty footage in real time and archive only the footage that contains, for example, humans. In addition we can automatically generate searchable and sortable log data from these feeds enabling an auditor to search for an instance of a person on a given day, or at a certain time, and quickly find if that footage even exists, without the need to recover hours of archived video and scan through it minute by minute.
 
+| This experiment made heavy use of NVidia's Jetson series docker containers to greatly improve the time it took to prototype and test inference and logging.
 | <a href="https://github.com/dusty-nv/jetson-inference" target="_blank">Jetson AI HelloWorld Docker container series</a>
