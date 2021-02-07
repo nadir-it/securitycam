@@ -44,7 +44,7 @@ imgName = ''
 imgExt = ".jpg"
 frameCount = 1
 while True:
-	img = camera1.Capture(format='rgb8', zeroCopy=1)
+	img = camera1.Capture(format='rgb8')
 	detections = net.Detect(img)
 	#objectCount = len(detections)
 	count=0
