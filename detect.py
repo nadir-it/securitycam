@@ -39,10 +39,12 @@ detectionList = ['person', 'car', 'truck', 'motorcycle', 'bicycle', 'bus', 'dog'
 
 logmsg = ''
 lastlogmsg = ''
-
-
+thingSpotted = False
+imgName = ''
+imgExt = ".jpg"
+frameCount = 1
 while True:
-	img = camera1.Capture(format='rgb8')
+	img = camera1.Capture(format='rgb8', zeroCopy=1)
 	detections = net.Detect(img)
 	#objectCount = len(detections)
 	count=0
@@ -52,16 +54,29 @@ while True:
 		if objectDetected in detectionList:
 			count = detectionCount[objectDetected] + 1
 			detectionCount.update({objectDetected:count})
+		if objectDetected == 'person':
+			thingSpotted = True	
+	#create log msg
 	logmsg = seccamlog.createLogMsg(detectionCount)
+	#reduce writes... only update on change
 	if logmsg != lastlogmsg:
 		seccamlog.writeLogMsg(logmsg)
-				#print(logmsg)
+				
 	lastlogmsg = logmsg
 	
 	display.Render(img)
-	#testoutput.Render(img)
+	
+	#if something was actually detected save frames
+	if thingSpotted == True:
+		imgName = seccamlog.createImgName()
+		outfile = "{}{}{}".format(imgName, frameCount, imgExt)
+		jetson.utils.saveImageRGBA(imgName, img)
+		frameCount = frameCount + 1
+		
 	display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-
+	thingSpotted=False
+	if frameCount > 120:
+		frameCount = 1
 	if not display.IsStreaming() or not camera1.IsStreaming():
 		break
 
