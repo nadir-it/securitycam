@@ -12,7 +12,7 @@
 volPath="--volume $HOME/securitycam:/securitycam"
 
 #always use the run command argument LAST
-runCameraCmd="--run /securitycam/detect.py --input-codec=mjpeg --output-codec=h265 --bitrate=4000000 v4l2:///dev/video0 file:///securitycam/test.mp4"
+runCameraCmd="--run /securitycam/detect.py --input-codec=mjpeg --output-codec=h265 --bitrate=4000000 $INURI $OUTURI"
 
 (cd $HOME/jetson-inference && docker/run.sh $volPath $runCameraCmd)
 #(cd $HOME/jetson-inference && docker/run.sh $volPath)
