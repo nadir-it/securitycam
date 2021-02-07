@@ -30,7 +30,7 @@ net = jetson.inference.detectNet(opt.network, sys.argv, opt.threshold)
 camera1 = jetson.utils.videoSource(opt.input_URI, argv=sys.argv)  #or csi://0 for example
 
 #display is a video output for testing/local purposes. Final system should stream to a server for storage.
-display = jetson.utils.videoOutput(opt.output_URI, argv=sys.argv) # "display://0" or 'my_video.mp4' for file
+display = jetson.utils.videoOutput(opt.output_URI, argv=sys.argv) # "display://0" or 'my_video.mp4' for file or for remote streaming rtp://<remote-ip>:1234
 
 
 #before transfer learning we only care about a small number of items the NN can detect
