@@ -70,8 +70,11 @@ while True:
 	if thingSpotted == True:
 		imgName = seccamlog.createImgName()
 		outfile = "{}{}{}".format(imgName, frameCount, imgExt)
-		jetson.utils.saveImageRGBA(imgName, img)
-		frameCount = frameCount + 1
+		try:
+			jetson.utils.saveImageRGBA(outfile, img)
+			frameCount = frameCount + 1
+		except:
+			print("Failed to save image: {}".format(outfile))
 		
 	display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
 	thingSpotted=False
