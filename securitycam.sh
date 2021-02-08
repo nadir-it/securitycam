@@ -7,6 +7,7 @@
 #	--volume /etc/timezone:/etc/timezone:ro \
 #	--volume /etc/localtime:/etc/localtime:ro \
 # The system will work without it but the time will be incorrect.
+# Change the docker run options from -it to -i
 
 #path to security camera control software to mount into container
 volPath="--volume $HOME/securitycam:/securitycam"
