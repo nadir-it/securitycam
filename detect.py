@@ -69,9 +69,10 @@ while True:
 	#if something was actually detected save frames
 	if thingSpotted == True:
 		imgName = seccamlog.createImgName()
-		outfile = "{}{}{}".format(imgName, frameCount, imgExt)
+		outfile = "/securitycam/{}{}{}".format(imgName, frameCount, imgExt)
 		try:
 			jetson.utils.saveImageRGBA(outfile, img)
+			print("Saved: {}".format(outfile))
 			frameCount = frameCount + 1
 		except:
 			print("Failed to save image: {}".format(outfile))
