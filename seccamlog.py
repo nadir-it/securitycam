@@ -36,9 +36,10 @@ def createLogMsg(objectsDetected):
 	return buffer
 
 def createImgName():
+	year, month, day = getDate()
 	loghour, logminute, logsecond = getTime()
-	logtime = "{}:{}:{}".format(loghour, logminute, logsecond)
-	buffer = "PERSONat{}".format(logtime)
+	logtime = "{}{}{}-{}{}{}".format(year, month, day, loghour, logminute, logsecond)
+	buffer = "PERSON{}".format(logtime)
 	return buffer
 
 def writeLogMsg(msg):
