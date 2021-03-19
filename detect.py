@@ -27,6 +27,8 @@ except:
 
 #load detection neural network
 net = jetson.inference.detectNet(opt.network, sys.argv, opt.threshold)
+
+
 camera1 = jetson.utils.videoSource(opt.input_URI, argv=sys.argv)  #or csi://0 for example
 
 #display is a video output for testing/local purposes. Final system should stream to a server for storage.
@@ -44,44 +46,54 @@ imgName = ''
 imgExt = ".jpg"
 frameCount = 1
 while True:
-	img = camera1.Capture(format='rgb8')
-	detections = net.Detect(img)
-	#objectCount = len(detections)
-	count=0
-	detectionCount = {'person': 0, 'car':0, 'truck':0, 'motorcycle':0, 'bicycle':0, 'bus':0, 'dog':0, 'cat':0 }
-	for thing in detections:
-		objectDetected = net.GetClassDesc(thing.ClassID)
-		if objectDetected in detectionList:
-			count = detectionCount[objectDetected] + 1
-			detectionCount.update({objectDetected:count})
-		if objectDetected == 'person':
-			thingSpotted = True	
-	#create log msg
-	logmsg = seccamlog.createLogMsg(detectionCount)
-	#reduce writes... only update on change
-	if logmsg != lastlogmsg:
-		seccamlog.writeLogMsg(logmsg)
-				
-	lastlogmsg = logmsg
-	
-	display.Render(img)
-	
-	#if something was actually detected save frames
-	if thingSpotted == True:
-		imgName = seccamlog.createImgName()
-		outfile = "/securitycam/{}{}{}".format(imgName, frameCount, imgExt)
-		try:
-			jetson.utils.saveImageRGBA(outfile, img)
-			print("Saved: {}".format(outfile))
-			frameCount = frameCount + 1
-		except:
-			print("Failed to save image: {}".format(outfile))
-		
-	display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-	thingSpotted=False
-	if frameCount > 120:
-		frameCount = 1
-	if not display.IsStreaming() or not camera1.IsStreaming():
-		break
+	try:
+		img = camera1.Capture(format='rgb8')
 
-print("Camera 1 Feed DOWN!!!!")
+		detections = net.Detect(img)
+		#objectCount = len(detections)
+		count=0
+		detectionCount = {'person': 0, 'car':0, 'truck':0, 'motorcycle':0, 'bicycle':0, 'bus':0, 'dog':0, 'cat':0 }
+		for thing in detections:
+			objectDetected = net.GetClassDesc(thing.ClassID)
+			if objectDetected in detectionList:
+				count = detectionCount[objectDetected] + 1
+				detectionCount.update({objectDetected:count})
+			if objectDetected == 'person':
+				thingSpotted = True	
+		#create log msg
+		logmsg = seccamlog.createLogMsg(detectionCount)
+		#reduce writes... only update on change
+		if logmsg != lastlogmsg:
+			seccamlog.writeLogMsg(logmsg)
+				
+		lastlogmsg = logmsg
+	
+		display.Render(img)
+	
+		#if something was actually detected save frames
+		if thingSpotted == True:
+			imgName = seccamlog.createImgName()
+			outfile = "/securitycam/{}{}{}".format(imgName, frameCount, imgExt)
+			try:
+				jetson.utils.saveImageRGBA(outfile, img)
+				print("Saved: {}".format(outfile))
+				frameCount = frameCount + 1
+			except:
+				print("Failed to save image: {}".format(outfile))
+		
+		display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+		thingSpotted=False
+		if frameCount > 120:
+			frameCount = 1
+		#if not camera1.IsStreaming():
+		#	print("Camera 1 Feed Down!")
+		if not display.IsStreaming():
+			break
+	except:
+		print("Camera 1 Feed Down!")
+		#Attempt recovery?
+		camera1 = jetson.utils.videoSource(opt.input_URI, argv=sys.argv)
+
+	finally:
+		print("Failed to recover!")
+print("Script crashed out!")
